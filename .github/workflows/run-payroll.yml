@@ -30,10 +30,12 @@ jobs:
       - name: Generate Payroll PDFs
         run: node payrollProcessor.js
 
-      - name: Upload Generated PDFs
+      # ✅ Upload all generated outputs, including debug.txt
+      - name: Upload Generated Files
         uses: actions/upload-artifact@v4
         with:
-          name: payroll-pdfs
+          name: payroll-artifacts
           path: |
             individual_report.pdf
             monthly_budget.pdf
+            debug.txt
