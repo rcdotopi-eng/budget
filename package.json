@@ -8,9 +8,11 @@
     "start": "node payrollProcessor.js"
   },
   "dependencies": {
-  "pdf-parse": "^1.1.1",
-  "jspdf": "^2.5.1",
-  "jspdf-autotable": "^3.8.4"
+    "pdf-parse": "^1.1.1",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.4",
+    "csv-parser": "^3.0.0"
+  }
 }
-}
+
 
