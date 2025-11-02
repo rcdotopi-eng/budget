@@ -14,6 +14,13 @@ const employeePdf = path.join(__dirname, "individual_report.pdf");
 const budgetPdf = path.join(__dirname, "monthly_budget.pdf");
 const debugFile = path.join(__dirname, "debug.txt");
 
+// === Verify PDF exists ===
+if (!fs.existsSync(pdfPath)) {
+  console.error(`❌ PDF not found at: ${pdfPath}`);
+  process.exit(1);
+} else {
+  console.log(`✅ Found PDF at: ${pdfPath}`);
+}
 
 const masterWages = {
   "0001": "Basic Pay",
@@ -43,9 +50,12 @@ async function extractFromPDF() {
   const data = await pdf(buffer);
   const text = data.text;
 
-  // 🧩 DEBUG: Write extracted text to file for inspection
+  // 🧩 DEBUG: Write full extracted text to debug.txt
   fs.writeFileSync(debugFile, text);
   console.log(`🧾 Raw PDF text exported to ${debugFile}`);
+
+  // Also preview first 300 chars in logs
+  console.log("🔍 Text preview:\n", text.substring(0, 300));
 
   const employees = text.split(/Personnel Number:\s*(\d+)/).slice(1);
   const records = [];
@@ -96,7 +106,7 @@ function generatePDFs(records, totals) {
   doc1.save(employeePdf);
   console.log("📄 Saved:", employeePdf);
 
-    // === 2️⃣ Monthly Budget Summary ===
+  // === 2️⃣ Monthly Budget Summary ===
   const doc2 = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   doc2.setFont("times", "bold");
   doc2.text("Monthly Budget Summary", 14, 15);
@@ -119,3 +129,5 @@ function generatePDFs(records, totals) {
   console.log("📄 Saved:", budgetPdf);
 }
 
+// === Run Everything ===
+extractFromPDF();
