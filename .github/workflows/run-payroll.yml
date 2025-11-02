@@ -11,6 +11,9 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./budget   # 👈 tell GitHub to run everything inside your budget folder
 
     steps:
     - name: Checkout repository
@@ -32,5 +35,5 @@ jobs:
       with:
         name: payroll-pdfs
         path: |
-          individual_report.pdf
-          monthly_budget.pdf
+          budget/individual_report.pdf
+          budget/monthly_budget.pdf
