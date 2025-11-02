@@ -64,12 +64,15 @@ async function extractFromPDF() {
   for (let i = 0; i < employees.length; i += 2) {
     const personnel = employees[i];
     const section = employees[i + 1] || "";
-    const payMatch = section.match(/Wage type Amount([\s\S]*?)Deductions - General/);
+
+    // ✅ FIXED: handle “Wage typeAmount” (no space) and variable spacing before “Deductions - General”
+    const payMatch = section.match(/Wage\s*type\s*Amount([\s\S]*?)Deductions\s*-\s*General/);
     const paySection = payMatch ? payMatch[1] : "";
 
-    const regex = /(\d{3,4})\s+([A-Za-z0-9 %()\-\/.&]+?)\s+([\d,]+\.\d{2})/g;
+    // ✅ FIXED: match codes + text + amount even on same line
+    const regex = /(\d{3,4})\s*([A-Za-z0-9 %()\-\/.&]+?)\s+([\d,]+\.\d{2})/g;
     const found = [...paySection.matchAll(regex)];
-    const foundMap = Object.fromEntries(found.map((m) => [m[1], m[3].replace(/,/g, "")]));
+    const foundMap = Object.fromEntries(found.map(m => [m[1], m[3].replace(/,/g, "")]));
 
     for (const [code, name] of Object.entries(masterWages)) {
       const amount = parseFloat(foundMap[code] || "0.00");
@@ -89,7 +92,7 @@ function generatePDFs(records, totals) {
   doc1.text("Individual Payroll Report", 14, 15);
   doc1.setFont("times", "normal");
 
-  const body = records.map((r) => [
+  const body = records.map(r => [
     r.personnel,
     r.code,
     r.name,
